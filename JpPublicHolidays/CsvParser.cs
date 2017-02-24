@@ -70,16 +70,4 @@ namespace JpPublicHolidays
             _csvReader.Dispose();
         }
     }
-
-    internal class Record
-    {
-        public string Name1 { get; set; }
-        public DateTime? Date1 { get; set; }
-
-        public string Name2 { get; set; }
-        public DateTime? Date2 { get; set; }
-
-        public string Name3 { get; set; }
-        public DateTime? Date3 { get; set; }
-    }
 }
