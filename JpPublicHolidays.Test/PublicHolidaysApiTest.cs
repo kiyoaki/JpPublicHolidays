@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PublicHolidays.Test
@@ -8,9 +9,9 @@ namespace PublicHolidays.Test
     public class PublicHolidaysApiTest
     {
         [TestMethod]
-        public void TestGet()
+        public async Task TestGet()
         {
-            var holidays = JpPublicHolidays.PublicHolidays.Get().Result;
+            var holidays = await JpPublicHolidays.PublicHolidays.Get();
             Assert.IsTrue(holidays.Length >= 20);
 
             var day = holidays.FirstOrDefault(x => x.Date == new DateTime(DateTime.Now.Year, 1, 1));
