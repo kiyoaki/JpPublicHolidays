@@ -1,6 +1,8 @@
 # JpPublicHolidays.NET
 内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです
 
+[![Build status](https://ci.appveyor.com/api/projects/status/nkdp4cwcnn8ofe0i?svg=true)](https://ci.appveyor.com/project/kiyoaki/jppublicholidays-net)
+
 Install
 ---
 * PM> Install-Package [JpPublicHolidays](https://www.nuget.org/packages/JpPublicHolidays/)
