@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PublicHolidays.Test
+namespace JpPublicHolidays.Test
 {
     [TestClass]
     public class PublicHolidaysApiTest
@@ -11,7 +11,7 @@ namespace PublicHolidays.Test
         [TestMethod]
         public async Task TestGet()
         {
-            var holidays = await JpPublicHolidays.PublicHolidays.Get();
+            var holidays = await PublicHolidays.Get();
             Assert.IsTrue(holidays.Length >= 20);
 
             var day = holidays.FirstOrDefault(x => x.Date == new DateTime(DateTime.Now.Year, 1, 1));
