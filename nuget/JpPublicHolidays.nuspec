@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>JpPublicHolidays</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <title>JpPublicHolidays</title>
         <authors>Kiyoaki Tsurutani</authors>
         <owners>Kiyoaki Tsurutani</owners>
@@ -10,6 +10,7 @@
         <projectUrl>https://github.com/kiyoaki/JpPublicHolidays.NET</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです。</description>
+        <releaseNotes>名前空間の変更</releaseNotes>
         <copyright>Kiyoaki Tsurutani</copyright>
         <language>ja-JP</language>
         <dependencies>
@@ -19,6 +20,6 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="..\src\JpPublicHolidays\bin\Release\PublicHolidays.dll" target="lib\portable-net45+wp8+win8\PublicHolidays.dll" />
+        <file src="..\JpPublicHolidays\bin\Release\PublicHolidays.dll" target="lib\portable-net45+wp8+win8\PublicHolidays.dll" />
     </files>
 </package>
