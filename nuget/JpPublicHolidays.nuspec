@@ -2,15 +2,16 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>JpPublicHolidays</id>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <title>JpPublicHolidays</title>
         <authors>Kiyoaki Tsurutani</authors>
         <owners>Kiyoaki Tsurutani</owners>
         <licenseUrl>https://github.com/kiyoaki/JpPublicHolidays.NET/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/kiyoaki/JpPublicHolidays.NET</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/kiyoaki/JpPublicHolidays.NET/master/nuget/icon.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです。</description>
-        <releaseNotes>名前空間の変更</releaseNotes>
+        <releaseNotes>アイコン追加</releaseNotes>
         <copyright>Kiyoaki Tsurutani</copyright>
         <language>ja-JP</language>
         <dependencies>
