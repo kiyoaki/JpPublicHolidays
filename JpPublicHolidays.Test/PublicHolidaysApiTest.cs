@@ -10,7 +10,7 @@ namespace PublicHolidays.Test
         [TestMethod]
         public void TestGet()
         {
-            var holidays = PublicHolidays.Get().Result;
+            var holidays = JpPublicHolidays.PublicHolidays.Get().Result;
             Assert.IsTrue(holidays.Length >= 20);
 
             var day = holidays.FirstOrDefault(x => x.Date == new DateTime(DateTime.Now.Year, 1, 1));

@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{265DB992-6A64-40BC-A5FB-A539D052D098}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays", "JpPublicHolidays\JpPublicHolidays.csproj", "{06305915-9D28-4B71-B984-7438AD3C0DC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays", "src\JpPublicHolidays\JpPublicHolidays.csproj", "{06305915-9D28-4B71-B984-7438AD3C0DC7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{34309133-07C0-4114-BD14-9AFEC247A11D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays.Test", "test\JpPublicHolidays.Test\JpPublicHolidays.Test.csproj", "{E45685E9-9673-45A7-A107-E301F4E55D34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays.Test", "JpPublicHolidays.Test\JpPublicHolidays.Test.csproj", "{E45685E9-9673-45A7-A107-E301F4E55D34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +34,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{06305915-9D28-4B71-B984-7438AD3C0DC7} = {265DB992-6A64-40BC-A5FB-A539D052D098}
-		{E45685E9-9673-45A7-A107-E301F4E55D34} = {34309133-07C0-4114-BD14-9AFEC247A11D}
 	EndGlobalSection
 EndGlobal

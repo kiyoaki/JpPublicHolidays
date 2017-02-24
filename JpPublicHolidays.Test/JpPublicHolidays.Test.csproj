@@ -54,7 +54,7 @@
     <Compile Include="PublicHolidaysApiTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JpPublicHolidays\JpPublicHolidays.csproj">
+    <ProjectReference Include="..\JpPublicHolidays\JpPublicHolidays.csproj">
       <Project>{06305915-9d28-4b71-b984-7438ad3c0dc7}</Project>
       <Name>JpPublicHolidays</Name>
     </ProjectReference>

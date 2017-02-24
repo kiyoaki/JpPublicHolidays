@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PublicHolidays
+namespace JpPublicHolidays
 {
     public class PublicHolidaysException : Exception
     {

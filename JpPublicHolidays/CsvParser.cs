@@ -6,7 +6,7 @@ using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace PublicHolidays
+namespace JpPublicHolidays
 {
     internal class CsvParser : IDisposable
     {
