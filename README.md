@@ -14,8 +14,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        var days = PublicHolidays.Get().Result;
-        foreach (var holiday in days)
+        var holidays = PublicHolidays.Get().Result;
+        foreach (var holiday in holidays)
         {
             Console.WriteLine($"{holiday.Name} {holiday.Date.ToShortDateString()}");
         }
