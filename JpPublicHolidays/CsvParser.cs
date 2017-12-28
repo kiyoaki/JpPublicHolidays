@@ -14,7 +14,7 @@ namespace JpPublicHolidays
 
         internal CsvParser(TextReader streamReader)
         {
-            _csvReader = new CsvReader(streamReader, new CsvConfiguration
+            _csvReader = new CsvReader(streamReader, new Configuration
             {
                 CultureInfo = new CultureInfo("ja-JP")
             });

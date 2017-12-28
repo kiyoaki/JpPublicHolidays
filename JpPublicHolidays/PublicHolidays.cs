@@ -17,6 +17,11 @@ namespace JpPublicHolidays
             Timeout = TimeSpan.FromSeconds(10)
         };
 
+        static PublicHolidays()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
+
         public static async Task<Holiday[]> Get()
         {
             try
