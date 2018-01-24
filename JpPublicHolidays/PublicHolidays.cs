@@ -19,7 +19,9 @@ namespace JpPublicHolidays
 
         static PublicHolidays()
         {
+#if !NET45
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
         }
 
         public static async Task<Holiday[]> Get()
