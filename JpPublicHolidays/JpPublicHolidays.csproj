@@ -18,7 +18,7 @@
     <RepositoryUrl>https://github.com/kiyoaki/JpPublicHolidays</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>japanese, holiday</PackageTags>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>opensource.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
