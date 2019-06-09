@@ -3,16 +3,16 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.2.0</Version>
-    <AssemblyVersion>2.2.0.0</AssemblyVersion>
-    <FileVersion>2.2.0.0</FileVersion>
+    <Version>2.3.0</Version>
+    <AssemblyVersion>2.3.0.0</AssemblyVersion>
+    <FileVersion>2.3.0.0</FileVersion>
     <NeutralLanguage>ja</NeutralLanguage>
-    <PackageReleaseNotes>Improve timeout handling</PackageReleaseNotes>
+    <PackageReleaseNotes>Add DateTimeOffset support</PackageReleaseNotes>
     <Company>Kiyoaki Tsurutani</Company>
     <Authors>Kiyoaki Tsurutani</Authors>
     <Description>内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです。</Description>
     <Copyright>Kiyoaki Tsurutani</Copyright>
-    <PackageLicenseUrl>https://github.com/kiyoaki/JpPublicHolidays/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/kiyoaki/JpPublicHolidays</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/kiyoaki/JpPublicHolidays.NET/master/nuget/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/kiyoaki/JpPublicHolidays</RepositoryUrl>
@@ -20,6 +20,7 @@
     <PackageTags>japanese, holiday</PackageTags>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>opensource.pfx</AssemblyOriginatorKeyFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' AND '$(TargetFramework)'=='net45'">
@@ -52,6 +53,13 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <PackageReference Include="System.Net.Http" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
