@@ -4,7 +4,16 @@ namespace JpPublicHolidays
 {
     public class Holiday
     {
+        private static readonly TimeZoneInfo JstTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
+
         public string Name { get; set; }
         public DateTime Date { get; set; }
+        public DateTimeOffset DateWithTimeZone
+        {
+            get
+            {
+                return new DateTimeOffset(Date, JstTimeZoneInfo.BaseUtcOffset);
+            }
+        }
     }
 }
