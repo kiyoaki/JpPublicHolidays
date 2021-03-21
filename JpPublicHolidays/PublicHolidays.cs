@@ -10,7 +10,7 @@ namespace JpPublicHolidays
 {
     public static class PublicHolidays
     {
-        private static readonly Uri BaseUri = new Uri("http://www8.cao.go.jp/");
+        private static readonly Uri BaseUri = new Uri("https://www8.cao.go.jp/");
         private const string Path = "/chosei/shukujitsu/syukujitsu.csv";
 
         private static readonly HttpClient HttpClient = new HttpClient

@@ -1,62 +1,32 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.3.0</Version>
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
-    <FileVersion>2.3.0.0</FileVersion>
-    <NeutralLanguage>ja</NeutralLanguage>
-    <PackageReleaseNotes>Add DateTimeOffset support</PackageReleaseNotes>
-    <Company>Kiyoaki Tsurutani</Company>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>2.4.0</Version>
     <Authors>Kiyoaki Tsurutani</Authors>
+    <Company>Kiyoaki Tsurutani</Company>
+    <Product />
     <Description>内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです。</Description>
-    <Copyright>Kiyoaki Tsurutani</Copyright>
-    <PackageLicenseUrl></PackageLicenseUrl>
+    <NeutralLanguage>ja-JP</NeutralLanguage>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/kiyoaki/JpPublicHolidays</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/kiyoaki/JpPublicHolidays.NET/master/nuget/icon.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/kiyoaki/JpPublicHolidays</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>japanese, holiday</PackageTags>
+    <PackageReleaseNotes>Support only .NET Core 3.1 LTS
+Download from https</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>false</SignAssembly>
+    <PackageIcon>icon.png</PackageIcon>
     <AssemblyOriginatorKeyFile>opensource.pfx</AssemblyOriginatorKeyFile>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' AND '$(TargetFramework)'=='net45'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;NETSTANDARD2_0;NET45</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' AND '$(TargetFramework)'!='net45'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;NETSTANDARD2_0;</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU' AND '$(TargetFramework)'=='net45'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>RELEASE;NETSTANDARD;NETSTANDARD2_0;NET45</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU' AND '$(TargetFramework)'!='net45'">
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="6.1.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <PackageReference Include="System.Net.Http" Version="4.0.0" />
+    <PackageReference Include="CsvHelper" Version="26.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE">
+    <None Include="..\nuget\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

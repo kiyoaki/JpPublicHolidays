@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using CsvHelper.Configuration;
 
 namespace JpPublicHolidays
 {
@@ -14,10 +13,7 @@ namespace JpPublicHolidays
 
         internal CsvParser(TextReader streamReader)
         {
-            _csvReader = new CsvReader(streamReader, new Configuration
-            {
-                CultureInfo = new CultureInfo("ja-JP")
-            });
+            _csvReader = new CsvReader(streamReader, new CultureInfo("ja-JP"));
         }
 
         internal Holiday[] Parse()
