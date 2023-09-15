@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Version>2.4.0</Version>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    <Version>2.5.0</Version>
     <Authors>Kiyoaki Tsurutani</Authors>
     <Company>Kiyoaki Tsurutani</Company>
     <Product />
@@ -13,22 +13,28 @@
     <RepositoryUrl>https://github.com/kiyoaki/JpPublicHolidays</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>japanese, holiday</PackageTags>
-    <PackageReleaseNotes>Support only .NET Core 3.1 LTS
-Download from https</PackageReleaseNotes>
+    <PackageReleaseNotes>Support net6.0, netstandard2.1</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>false</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <AssemblyOriginatorKeyFile>opensource.pfx</AssemblyOriginatorKeyFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="26.0.1" />
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\nuget\icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

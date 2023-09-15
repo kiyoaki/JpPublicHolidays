@@ -6,7 +6,7 @@ namespace JpPublicHolidays
     {
         private static readonly TimeZoneInfo JstTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public DateTimeOffset DateWithTimeZone
         {
