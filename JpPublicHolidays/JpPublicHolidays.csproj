@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0</TargetFrameworks>
-    <Version>2.5.0</Version>
+    <Version>2.6.0</Version>
     <Authors>Kiyoaki Tsurutani</Authors>
     <Company>Kiyoaki Tsurutani</Company>
     <Product />
@@ -19,6 +19,8 @@
     <PackageIcon>icon.png</PackageIcon>
     <AssemblyOriginatorKeyFile>opensource.pfx</AssemblyOriginatorKeyFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Title>JpPublicHolidays</Title>
+    <Copyright>Copyright (c) Kiyoaki Tsurutani 2025</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
