@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0</TargetFrameworks>
     <Version>2.5.0</Version>
     <Authors>Kiyoaki Tsurutani</Authors>
     <Company>Kiyoaki Tsurutani</Company>
@@ -13,18 +13,17 @@
     <RepositoryUrl>https://github.com/kiyoaki/JpPublicHolidays</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>japanese, holiday</PackageTags>
-    <PackageReleaseNotes>Support net6.0, netstandard2.1</PackageReleaseNotes>
+    <PackageReleaseNotes>Support netstandard2.0;netstandard2.1;net8.0;net9.0</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>false</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <AssemblyOriginatorKeyFile>opensource.pfx</AssemblyOriginatorKeyFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>

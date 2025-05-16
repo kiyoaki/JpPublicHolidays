@@ -1,9 +1,4 @@
-ï»¿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace JpPublicHolidays.Test
+namespace JpPublicHolidays.Test.Net8
 {
     public class PublicHolidaysApiTest
     {
@@ -15,7 +10,7 @@ namespace JpPublicHolidays.Test
 
             var day = holidays.FirstOrDefault(x => x.Date == new DateTime(DateTime.Now.Year, 1, 1));
             Assert.NotNull(day);
-            Assert.Equal("å…ƒæ—¥", day.Name);
+            Assert.Equal("Œ³“ú", day.Name);
         }
     }
 }
