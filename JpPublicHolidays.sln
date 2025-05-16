@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JpPublicHolidays", "JpPubli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays.Test.Net8", "JpPublicHolidays.Test.Net8\JpPublicHolidays.Test.Net8.csproj", "{3AB56997-6F67-4920-A7C3-7DD941550670}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays.ConsoleApp472", "JpPublicHolidays.ConsoleApp472\JpPublicHolidays.ConsoleApp472.csproj", "{DAE91BA6-0743-4A96-97C9-4E076E86D292}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JpPublicHolidays.ConsoleApp.Net9", "JpPublicHolidays.ConsoleApp.Net9\JpPublicHolidays.ConsoleApp.Net9.csproj", "{8C0DA7C7-BCF4-4398-9EBB-1D708B32B022}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{3AB56997-6F67-4920-A7C3-7DD941550670}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AB56997-6F67-4920-A7C3-7DD941550670}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AB56997-6F67-4920-A7C3-7DD941550670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAE91BA6-0743-4A96-97C9-4E076E86D292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE91BA6-0743-4A96-97C9-4E076E86D292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE91BA6-0743-4A96-97C9-4E076E86D292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE91BA6-0743-4A96-97C9-4E076E86D292}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0DA7C7-BCF4-4398-9EBB-1D708B32B022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0DA7C7-BCF4-4398-9EBB-1D708B32B022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0DA7C7-BCF4-4398-9EBB-1D708B32B022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0DA7C7-BCF4-4398-9EBB-1D708B32B022}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0</TargetFrameworks>
+    <RootNamespace>JpPublicHolidays</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);1701;1702;9124;0436</NoWarn>
+    <LangVersion>13</LangVersion>
     <Version>2.6.0</Version>
     <Authors>Kiyoaki Tsurutani</Authors>
     <Company>Kiyoaki Tsurutani</Company>

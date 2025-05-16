@@ -23,7 +23,7 @@ namespace JpPublicHolidays
             {
                 try
                 {
-                    if (_csvReader.TryGetField(0, out DateTime date) && _csvReader.TryGetField(1, out string name))
+                    if (_csvReader.TryGetField(0, out DateTime date) && _csvReader.TryGetField(1, out string? name))
                     {
                         list.Add(new Holiday
                         {
