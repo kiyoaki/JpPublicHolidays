@@ -10,7 +10,7 @@ namespace JpPublicHolidays.Test.Net8
 
             var day = holidays.FirstOrDefault(x => x.Date == new DateTime(DateTime.Now.Year, 1, 1));
             Assert.NotNull(day);
-            Assert.Equal("Œ³“ú", day.Name);
+            Assert.Equal("å…ƒæ—¥", day.Name);
         }
     }
 }
