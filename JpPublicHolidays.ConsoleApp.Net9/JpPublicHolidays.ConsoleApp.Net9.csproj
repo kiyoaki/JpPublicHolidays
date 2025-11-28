@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JpPublicHolidays" Version="2.6.0" />
+    <ProjectReference Include="..\JpPublicHolidays\JpPublicHolidays.csproj" />
   </ItemGroup>
 
   <ItemGroup>
