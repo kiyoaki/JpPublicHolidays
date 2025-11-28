@@ -276,5 +276,19 @@ namespace JpPublicHolidays.Test.Net8
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => db.Save(filePath));
         }
+
+        [Fact]
+        public async Task CreateFromApiAsync_ShouldBuildDatabase()
+        {
+            // Act
+            var db = await HolidayDatabase.CreateFromApiAsync();
+
+            // Assert
+            Assert.True(db.IsInitialized);
+            Assert.True(db.Count > 0);
+            var newYear = db.FindByDate(new DateTime(DateTime.Now.Year, 1, 1));
+            Assert.NotNull(newYear);
+            Assert.Equal("元日", newYear.Name);
+        }
     }
 }
