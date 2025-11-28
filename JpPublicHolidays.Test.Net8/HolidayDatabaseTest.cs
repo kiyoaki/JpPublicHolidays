@@ -257,6 +257,25 @@ namespace JpPublicHolidays.Test.Net8
         }
 
         [Fact]
+        public void SaveToStream_AndLoadFromStream_ShouldPreserveData()
+        {
+            // Arrange
+            var holidays = GetSampleHolidays();
+            var db = HolidayDatabase.Create(holidays);
+
+            // Act
+            using var saveStream = new MemoryStream();
+            db.Save(saveStream);
+            saveStream.Position = 0;
+
+            var loadedDb = HolidayDatabase.LoadFromStream(saveStream);
+
+            // Assert
+            Assert.Equal(db.Count, loadedDb.Count);
+            Assert.NotNull(loadedDb.FindByDate(new DateTime(2025, 1, 1)));
+        }
+
+        [Fact]
         public void FindByDate_ThrowsWhenNotInitialized()
         {
             // Arrange
