@@ -3,9 +3,9 @@ namespace JpPublicHolidays.Test.Net8
     public class HolidayTest
     {
         [Fact]
-        public void JstTimeZoneInfo_ShouldBeInitialized()
+        public void DateWithTimeZone_ShouldWorkAfterStaticInitialization()
         {
-            // Act - Create a Holiday instance to trigger static constructor
+            // Act - Create a Holiday instance and access DateWithTimeZone
             var holiday = new Holiday
             {
                 Name = "元日",
