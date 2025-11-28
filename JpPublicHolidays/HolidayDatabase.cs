@@ -265,5 +265,17 @@ namespace JpPublicHolidays
             db.Load(data);
             return db;
         }
+
+        /// <summary>
+        /// Creates and loads a HolidayDatabase from a stream.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <returns>A new HolidayDatabase loaded from the stream.</returns>
+        public static HolidayDatabase LoadFromStream(Stream stream)
+        {
+            var db = new HolidayDatabase();
+            db.Load(stream);
+            return db;
+        }
     }
 }
