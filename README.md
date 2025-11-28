@@ -110,10 +110,10 @@ var holidays = db.FindByDateRange(
 ### 最も近い祝日を検索
 ```csharp
 // 指定日以前で最も近い祝日
-var closest = db.FindClosestByDate(new DateTime(2025, 2, 1), selectLower: true);
+var closestBefore = db.FindClosestByDate(new DateTime(2025, 2, 1), selectLower: true);
 
 // 指定日以降で最も近い祝日
-var closest = db.FindClosestByDate(new DateTime(2025, 2, 1), selectLower: false);
+var closestAfter = db.FindClosestByDate(new DateTime(2025, 2, 1), selectLower: false);
 ```
 
 ### その他のメソッド
