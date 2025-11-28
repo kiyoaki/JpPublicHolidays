@@ -6,6 +6,6 @@ namespace System.Runtime.CompilerServices
     /// <summary>
     /// Polyfill for init accessor support in .NET Standard.
     /// </summary>
-    internal static class IsExternalInit { }
+    internal class IsExternalInit { }
 }
 #endif
