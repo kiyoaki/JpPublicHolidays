@@ -71,7 +71,7 @@ var db2 = HolidayDatabase.Create(holidays);
 var db = HolidayDatabase.LoadFromFile("holidays.db");
 
 // byte[]から読み込み
-var db = HolidayDatabase.LoadFromBytes(data);
+var db2 = HolidayDatabase.LoadFromBytes(data);
 ```
 
 ### 日付で検索
