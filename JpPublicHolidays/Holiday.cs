@@ -28,7 +28,9 @@ namespace JpPublicHolidays
                         "JST",
                         JstOffset,
                         "Japan Standard Time",
-                        "Japan Standard Time");
+                        "Japan Standard Time",
+                        null,
+                        new TimeZoneInfo.AdjustmentRule[0]);
                 }
             }
         }
