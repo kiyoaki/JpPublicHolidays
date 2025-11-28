@@ -22,7 +22,6 @@ namespace JpPublicHolidays
         /// Allows searching holidays by name.
         /// </summary>
         [SecondaryKey(0), NonUnique]
-        [StringComparisonOption(StringComparison.OrdinalIgnoreCase)]
         public string Name { get; init; } = string.Empty;
 
         /// <summary>
