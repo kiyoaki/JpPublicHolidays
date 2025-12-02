@@ -62,7 +62,7 @@ db.Save("holidays.db");
 
 // 既存のHoliday[]から作成することも可能
 var holidays = await PublicHolidays.Get();
-var db2 = HolidayDatabase.Create(holidays);
+var dbFromHolidays = HolidayDatabase.Create(holidays);
 ```
 
 ### データベースの読み込み
@@ -71,7 +71,7 @@ var db2 = HolidayDatabase.Create(holidays);
 var db = HolidayDatabase.LoadFromFile("holidays.db");
 
 // byte[]から読み込み
-var db2 = HolidayDatabase.LoadFromBytes(data);
+var dbFromBytes = HolidayDatabase.LoadFromBytes(data);
 ```
 
 ### 日付で検索

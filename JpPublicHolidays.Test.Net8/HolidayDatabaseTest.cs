@@ -309,5 +309,77 @@ namespace JpPublicHolidays.Test.Net8
             Assert.NotNull(newYear);
             Assert.Equal("元日", newYear.Name);
         }
+
+        [Fact]
+        public void Build_ThrowsArgumentNullException_WhenHolidaysIsNull()
+        {
+            // Arrange
+            var db = new HolidayDatabase();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => db.Build(null!));
+        }
+
+        [Fact]
+        public void SaveToFile_ThrowsArgumentException_WhenFilePathIsNullOrEmpty()
+        {
+            // Arrange
+            var db = HolidayDatabase.Create(GetSampleHolidays());
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => db.Save((string)null!));
+            Assert.Throws<ArgumentException>(() => db.Save(string.Empty));
+        }
+
+        [Fact]
+        public void SaveToStream_ThrowsArgumentNullException_WhenStreamIsNull()
+        {
+            // Arrange
+            var db = HolidayDatabase.Create(GetSampleHolidays());
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => db.Save((Stream)null!));
+        }
+
+        [Fact]
+        public void LoadFromFile_ThrowsArgumentException_WhenFilePathIsNullOrEmpty()
+        {
+            // Arrange
+            var db = new HolidayDatabase();
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => db.Load((string)null!));
+            Assert.Throws<ArgumentException>(() => db.Load(string.Empty));
+        }
+
+        [Fact]
+        public void LoadFromBytes_ThrowsArgumentNullException_WhenDataIsNull()
+        {
+            // Arrange
+            var db = new HolidayDatabase();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => db.Load((byte[])null!));
+        }
+
+        [Fact]
+        public void LoadFromStream_ThrowsArgumentNullException_WhenStreamIsNull()
+        {
+            // Arrange
+            var db = new HolidayDatabase();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => db.Load((Stream)null!));
+        }
+
+        [Fact]
+        public void FindByName_ThrowsArgumentNullException_WhenNameIsNull()
+        {
+            // Arrange
+            var db = HolidayDatabase.Create(GetSampleHolidays());
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => db.FindByName(null!));
+        }
     }
 }
