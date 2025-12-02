@@ -31,6 +31,10 @@ namespace JpPublicHolidays
         /// <param name="holidays">The holidays to add to the database.</param>
         public void Build(Holiday[] holidays)
         {
+            if (holidays == null)
+            {
+                throw new ArgumentNullException(nameof(holidays));
+            }
             var records = holidays.Select(HolidayRecord.FromHoliday).ToArray();
             var builder = new DatabaseBuilder();
             builder.Append(records);
