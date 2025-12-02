@@ -116,6 +116,11 @@ namespace JpPublicHolidays
         /// <param name="stream">The stream to read from. The stream must be positioned at the start of the database data.</param>
         public void Load(Stream stream)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             using var ms = new MemoryStream();
             stream.CopyTo(ms);
             var data = ms.ToArray();
