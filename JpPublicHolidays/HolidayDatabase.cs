@@ -58,6 +58,11 @@ namespace JpPublicHolidays
         /// <param name="filePath">The file path to save to.</param>
         public void Save(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+            }
+
             if (_database == null)
             {
                 throw new InvalidOperationException("Database is not initialized. Call Build or Load first.");
@@ -74,6 +79,11 @@ namespace JpPublicHolidays
         /// <param name="stream">The stream to write to.</param>
         public void Save(Stream stream)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             if (_database == null)
             {
                 throw new InvalidOperationException("Database is not initialized. Call Build or Load first.");
