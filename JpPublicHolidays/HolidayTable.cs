@@ -29,6 +29,11 @@ namespace JpPublicHolidays
         /// </summary>
         public static HolidayRecord FromHoliday(Holiday holiday)
         {
+            if (holiday == null)
+            {
+                throw new ArgumentNullException(nameof(holiday));
+            }
+
             return new HolidayRecord
             {
                 Date = holiday.Date,
