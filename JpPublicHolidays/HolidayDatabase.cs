@@ -99,6 +99,10 @@ namespace JpPublicHolidays
         /// <param name="data">The binary data to load.</param>
         public void Load(byte[] data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
             _database = new MemoryDatabase(data);
         }
 
