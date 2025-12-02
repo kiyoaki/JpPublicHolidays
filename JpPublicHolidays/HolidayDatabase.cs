@@ -85,6 +85,10 @@ namespace JpPublicHolidays
         /// <param name="filePath">The file path to load from.</param>
         public void Load(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+            }
             var data = File.ReadAllBytes(filePath);
             _database = new MemoryDatabase(data);
         }
