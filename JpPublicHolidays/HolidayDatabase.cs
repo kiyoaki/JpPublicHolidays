@@ -160,6 +160,10 @@ namespace JpPublicHolidays
         /// <returns>An array of holidays with the specified name.</returns>
         public Holiday[] FindByName(string name)
         {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
             EnsureInitialized();
             var records = _database!.HolidayRecordTable.FindByName(name);
             return records.Select(r => r.ToHoliday()).ToArray();
