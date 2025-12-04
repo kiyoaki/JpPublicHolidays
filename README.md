@@ -1,17 +1,45 @@
-# JpPublicHolidays.NET
-内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです
+# JpPublicHolidays
 
-![](https://raw.githubusercontent.com/kiyoaki/JpPublicHolidays.NET/master/nuget/default.png)
+内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです。
 
-[![Build status](https://ci.appveyor.com/api/projects/status/nkdp4cwcnn8ofe0i?svg=true)](https://ci.appveyor.com/project/kiyoaki/jppublicholidays-net)
+![国民の祝日](https://raw.githubusercontent.com/kiyoaki/JpPublicHolidays/master/nuget/default.png)
 
-Install
----
-* PM> Install-Package [JpPublicHolidays](https://www.nuget.org/packages/JpPublicHolidays/)
+[![NuGet](https://img.shields.io/nuget/v/JpPublicHolidays.svg)](https://www.nuget.org/packages/JpPublicHolidays/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Quick Start
----
-C# 7.1
+## 対応フレームワーク
+
+- .NET Standard 2.0
+- .NET Standard 2.1
+- .NET 8.0
+- .NET 9.0
+
+## インストール
+
+NuGet Package Manager:
+```
+PM> Install-Package JpPublicHolidays
+```
+
+.NET CLI:
+```
+dotnet add package JpPublicHolidays
+```
+
+## Quick Start
+
+### トップレベルステートメント (C# 9.0以降)
+```csharp
+using JpPublicHolidays;
+
+var holidays = await PublicHolidays.Get();
+foreach (var holiday in holidays)
+{
+    Console.WriteLine($"{holiday.Name} {holiday.Date.ToShortDateString()}");
+}
+```
+
+### 従来のスタイル
 ```csharp
 using JpPublicHolidays;
 using System;
@@ -28,27 +56,14 @@ namespace ConsoleApp
             {
                 Console.WriteLine($"{holiday.Name} {holiday.Date.ToShortDateString()}");
             }
-            Console.ReadKey();
         }
     }
 }
-
-```
-C# 9.0
-```csharp
-using JpPublicHolidays;
-
-var holidays = await PublicHolidays.Get();
-foreach (var holiday in holidays)
-{
-    Console.WriteLine($"{holiday.Name} {holiday.Date.ToShortDateString()}");
-}
-Console.ReadKey();
 ```
 
-HolidayDatabase (MasterMemory)
----
-祝日データをMasterMemory（[Cysharp/MasterMemory](https://github.com/Cysharp/MasterMemory)）を使用したインメモリデータベースとして保存・検索できます。
+## HolidayDatabase (MasterMemory)
+
+祝日データを[MasterMemory](https://github.com/Cysharp/MasterMemory)を使用したインメモリデータベースとして保存・検索できます。
 
 ### データベースの作成と保存
 ```csharp
@@ -124,3 +139,7 @@ var all = db.GetAll();
 // 祝日の数を取得
 int count = db.Count;
 ```
+
+## ライセンス
+
+[MIT License](LICENSE)
