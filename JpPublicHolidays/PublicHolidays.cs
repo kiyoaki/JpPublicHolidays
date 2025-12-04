@@ -28,8 +28,8 @@ namespace JpPublicHolidays
         {
             try
             {
-                var response = await HttpClient.GetAsync(Path, cancellationToken).ConfigureAwait(false);
-                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using (var response = await HttpClient.GetAsync(Path, cancellationToken).ConfigureAwait(false))
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                 using (var streamReader = new StreamReader(stream, Encoding.GetEncoding("shift_jis"), true))
                 {
                     if (!response.IsSuccessStatusCode)
