@@ -12,7 +12,6 @@
 - .NET Standard 2.0
 - .NET Standard 2.1
 - .NET 8.0
-- .NET 9.0
 
 ## インストール
 
