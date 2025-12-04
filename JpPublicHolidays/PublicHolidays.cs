@@ -29,20 +29,18 @@ namespace JpPublicHolidays
             try
             {
                 using (var response = await HttpClient.GetAsync(Path, cancellationToken).ConfigureAwait(false))
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream, Encoding.GetEncoding("shift_jis"), true))
                 {
-                    var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    using (var streamReader = new StreamReader(stream, Encoding.GetEncoding("shift_jis"), true))
+                    if (!response.IsSuccessStatusCode)
                     {
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            throw new PublicHolidaysException(
-                                $"Status code: {response.StatusCode} Response data: {streamReader.ReadToEnd()}");
-                        }
+                        throw new PublicHolidaysException(
+                            $"Status code: {response.StatusCode} Response data: {streamReader.ReadToEnd()}");
+                    }
 
-                        using (var csvParser = new CsvParser(streamReader))
-                        {
-                            return csvParser.Parse();
-                        }
+                    using (var csvParser = new CsvParser(streamReader))
+                    {
+                        return csvParser.Parse();
                     }
                 }
             }
