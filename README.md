@@ -81,8 +81,8 @@ var holiday = db.FindByDate(new DateTime(2025, 1, 1));
 // holiday.Name => "元日"
 
 // 祝日かどうかを確認
-bool isHoliday = db.IsHoliday(new DateTime(2025, 1, 1)); // true
-bool isHoliday2 = db.IsHoliday(new DateTime(2025, 1, 2)); // false
+bool isHolidayJan1 = db.IsHoliday(new DateTime(2025, 1, 1)); // true
+bool isHolidayJan2 = db.IsHoliday(new DateTime(2025, 1, 2)); // false
 
 // TryFindByDateで安全に取得
 if (db.TryFindByDate(new DateTime(2025, 1, 1), out var result))
