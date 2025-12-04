@@ -32,6 +32,7 @@ jobs:
       run: |
         dotnet build JpPublicHolidays/JpPublicHolidays.csproj -c Release --no-restore
         dotnet build JpPublicHolidays.Test.Net8/JpPublicHolidays.Test.Net8.csproj -c Release --no-restore
+        dotnet build JpPublicHolidays.ConsoleApp.Net9/JpPublicHolidays.ConsoleApp.Net9.csproj -c Release --no-restore
 
     - name: Test
       run: dotnet test JpPublicHolidays.Test.Net8/JpPublicHolidays.Test.Net8.csproj -c Release --no-build --verbosity normal
