@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;</TargetFrameworks>
     <RootNamespace>JpPublicHolidays</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);1701;1702;9124;0436</NoWarn>
     <LangVersion>13</LangVersion>
-    <Version>2.6.0</Version>
+    <Version>2.7.0</Version>
     <Authors>Kiyoaki Tsurutani</Authors>
     <Company>Kiyoaki Tsurutani</Company>
     <Product />
@@ -18,7 +18,7 @@
     <RepositoryUrl>https://github.com/kiyoaki/JpPublicHolidays</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>japanese, holiday</PackageTags>
-    <PackageReleaseNotes>Support netstandard2.0;netstandard2.1;net8.0;net9.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Support local Database file</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>false</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
