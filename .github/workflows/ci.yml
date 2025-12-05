@@ -24,18 +24,10 @@ jobs:
           10.0.x
 
     - name: Restore dependencies
-      run: |
-        dotnet restore JpPublicHolidays/JpPublicHolidays.csproj
-        dotnet restore tests/JpPublicHolidays.Test.Net8/JpPublicHolidays.Test.Net8.csproj
-        dotnet restore samples/JpPublicHolidays.ConsoleApp.Net9/JpPublicHolidays.ConsoleApp.Net9.csproj
-        dotnet restore samples/JpPublicHolidays.ConsoleApp.NET10/JpPublicHolidays.ConsoleApp.NET10.csproj
+      run: dotnet restore JpPublicHolidays.slnx
 
     - name: Build
-      run: |
-        dotnet build JpPublicHolidays/JpPublicHolidays.csproj -c Release --no-restore
-        dotnet build tests/JpPublicHolidays.Test.Net8/JpPublicHolidays.Test.Net8.csproj -c Release --no-restore
-        dotnet build samples/JpPublicHolidays.ConsoleApp.Net9/JpPublicHolidays.ConsoleApp.Net9.csproj -c Release --no-restore
-        dotnet build samples/JpPublicHolidays.ConsoleApp.NET10/JpPublicHolidays.ConsoleApp.NET10.csproj -c Release --no-restore
+      run: dotnet build JpPublicHolidays.slnx -c Release --no-restore
 
     - name: Test
       run: dotnet test tests/JpPublicHolidays.Test.Net8/JpPublicHolidays.Test.Net8.csproj -c Release --no-build --verbosity normal
