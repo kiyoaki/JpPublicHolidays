@@ -1,5 +1,7 @@
 # JpPublicHolidays
 
+[![CI](https://github.com/kiyoaki/JpPublicHolidays/actions/workflows/ci.yml/badge.svg)](https://github.com/kiyoaki/JpPublicHolidays/actions/workflows/ci.yml)
+
 内閣府ホームページで公開されている「国民の祝日」CSVファイルを扱うためのライブラリです。
 
 ![国民の祝日](https://raw.githubusercontent.com/kiyoaki/JpPublicHolidays/master/nuget/default.png)
