@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/github/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/JpPublicHolidays.ConsoleApp.Net9/JpPublicHolidays.ConsoleApp.Net9.csproj" />
     <Project Path="samples/JpPublicHolidays.ConsoleApp472/JpPublicHolidays.ConsoleApp472.csproj" Id="dae91ba6-0743-4a96-97c9-4e076e86d292" />
