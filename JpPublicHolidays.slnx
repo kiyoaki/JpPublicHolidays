@@ -3,8 +3,6 @@
     <File Path=".github/workflows/ci.yml" />
   </Folder>
   <Folder Name="/samples/">
-    <Project Path="samples/JpPublicHolidays.ConsoleApp.Net9/JpPublicHolidays.ConsoleApp.Net9.csproj" />
-    <Project Path="samples/JpPublicHolidays.ConsoleApp472/JpPublicHolidays.ConsoleApp472.csproj" Id="dae91ba6-0743-4a96-97c9-4e076e86d292" />
     <Project Path="samples/JpPublicHolidays.ConsoleApp.NET10/JpPublicHolidays.ConsoleApp.NET10.csproj" Id="953a2712-2506-4685-80c4-1e25efa09d47" />
   </Folder>
   <Folder Name="/tests/">
