@@ -1,8 +1,10 @@
-namespace JpPublicHolidays.Test.Net8
+using NextUnit;
+
+namespace JpPublicHolidays.Test
 {
     public class PublicHolidaysApiTest
     {
-        [Fact]
+        [Test]
         public async Task TestGet()
         {
             var holidays = await PublicHolidays.Get();

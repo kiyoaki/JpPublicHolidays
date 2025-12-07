@@ -1,4 +1,6 @@
-namespace JpPublicHolidays.Test.Net8
+using NextUnit;
+
+namespace JpPublicHolidays.Test
 {
     public class HolidayDatabaseTest
     {
@@ -17,7 +19,7 @@ namespace JpPublicHolidays.Test.Net8
             };
         }
 
-        [Fact]
+        [Test]
         public void Create_ShouldBuildDatabaseFromHolidays()
         {
             // Arrange
@@ -31,7 +33,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal(holidays.Length, db.Count);
         }
 
-        [Fact]
+        [Test]
         public void FindByDate_ShouldReturnCorrectHoliday()
         {
             // Arrange
@@ -47,7 +49,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal(searchDate, result.Date);
         }
 
-        [Fact]
+        [Test]
         public void FindByDate_ShouldReturnNullForNonHoliday()
         {
             // Arrange
@@ -61,7 +63,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Null(result);
         }
 
-        [Fact]
+        [Test]
         public void TryFindByDate_ShouldReturnTrueForHoliday()
         {
             // Arrange
@@ -77,7 +79,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal("元日", result.Name);
         }
 
-        [Fact]
+        [Test]
         public void TryFindByDate_ShouldReturnFalseForNonHoliday()
         {
             // Arrange
@@ -92,7 +94,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Null(result);
         }
 
-        [Fact]
+        [Test]
         public void FindByName_ShouldReturnAllMatchingHolidays()
         {
             // Arrange
@@ -106,7 +108,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.All(results, h => Assert.Equal("元日", h.Name));
         }
 
-        [Fact]
+        [Test]
         public void FindByName_ShouldReturnEmptyArrayForNonExistentName()
         {
             // Arrange
@@ -119,7 +121,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Empty(results);
         }
 
-        [Fact]
+        [Test]
         public void FindByDateRange_ShouldReturnHolidaysWithinRange()
         {
             // Arrange
@@ -135,7 +137,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.All(results, h => Assert.True(h.Date >= startDate && h.Date <= endDate));
         }
 
-        [Fact]
+        [Test]
         public void FindClosestByDate_ShouldFindNearestHolidayBefore()
         {
             // Arrange
@@ -151,7 +153,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal(new DateTime(2025, 1, 13), result.Date);
         }
 
-        [Fact]
+        [Test]
         public void FindClosestByDate_ShouldFindNearestHolidayAfter()
         {
             // Arrange
@@ -167,7 +169,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal(new DateTime(2025, 2, 11), result.Date);
         }
 
-        [Fact]
+        [Test]
         public void IsHoliday_ShouldReturnTrueForHoliday()
         {
             // Arrange
@@ -178,7 +180,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.True(db.IsHoliday(new DateTime(2025, 5, 5)));
         }
 
-        [Fact]
+        [Test]
         public void IsHoliday_ShouldReturnFalseForNonHoliday()
         {
             // Arrange
@@ -189,7 +191,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.False(db.IsHoliday(new DateTime(2025, 12, 25)));
         }
 
-        [Fact]
+        [Test]
         public void GetAll_ShouldReturnAllHolidays()
         {
             // Arrange
@@ -203,7 +205,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal(holidays.Length, results.Length);
         }
 
-        [Fact]
+        [Test]
         public void SaveAndLoad_ShouldPreserveData()
         {
             // Arrange
@@ -234,7 +236,7 @@ namespace JpPublicHolidays.Test.Net8
             }
         }
 
-        [Fact]
+        [Test]
         public void SaveToStream_AndLoadFromBytes_ShouldPreserveData()
         {
             // Arrange
@@ -256,7 +258,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.NotNull(loadedDb.FindByDate(new DateTime(2025, 1, 1)));
         }
 
-        [Fact]
+        [Test]
         public void SaveToStream_AndLoadFromStream_ShouldPreserveData()
         {
             // Arrange
@@ -275,7 +277,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.NotNull(loadedDb.FindByDate(new DateTime(2025, 1, 1)));
         }
 
-        [Fact]
+        [Test]
         public void FindByDate_ThrowsWhenNotInitialized()
         {
             // Arrange
@@ -285,7 +287,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<InvalidOperationException>(() => db.FindByDate(DateTime.Now));
         }
 
-        [Fact]
+        [Test]
         public void Save_ThrowsWhenNotInitialized()
         {
             // Arrange
@@ -296,7 +298,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<InvalidOperationException>(() => db.Save(filePath));
         }
 
-        [Fact]
+        [Test]
         public async Task CreateFromApiAsync_ShouldBuildDatabase()
         {
             // Act
@@ -310,7 +312,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal("元日", newYear.Name);
         }
 
-        [Fact]
+        [Test]
         public void Build_ThrowsArgumentNullException_WhenHolidaysIsNull()
         {
             // Arrange
@@ -320,7 +322,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<ArgumentNullException>(() => db.Build(null!));
         }
 
-        [Fact]
+        [Test]
         public void SaveToFile_ThrowsArgumentException_WhenFilePathIsNullOrEmpty()
         {
             // Arrange
@@ -331,7 +333,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<ArgumentException>(() => db.Save(string.Empty));
         }
 
-        [Fact]
+        [Test]
         public void SaveToStream_ThrowsArgumentNullException_WhenStreamIsNull()
         {
             // Arrange
@@ -341,7 +343,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<ArgumentNullException>(() => db.Save((Stream)null!));
         }
 
-        [Fact]
+        [Test]
         public void LoadFromFile_ThrowsArgumentException_WhenFilePathIsNullOrEmpty()
         {
             // Arrange
@@ -352,7 +354,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<ArgumentException>(() => db.Load(string.Empty));
         }
 
-        [Fact]
+        [Test]
         public void LoadFromBytes_ThrowsArgumentNullException_WhenDataIsNull()
         {
             // Arrange
@@ -362,7 +364,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<ArgumentNullException>(() => db.Load((byte[])null!));
         }
 
-        [Fact]
+        [Test]
         public void LoadFromStream_ThrowsArgumentNullException_WhenStreamIsNull()
         {
             // Arrange
@@ -372,7 +374,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Throws<ArgumentNullException>(() => db.Load((Stream)null!));
         }
 
-        [Fact]
+        [Test]
         public void FindByName_ThrowsArgumentNullException_WhenNameIsNull()
         {
             // Arrange

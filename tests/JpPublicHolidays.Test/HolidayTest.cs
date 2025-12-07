@@ -1,8 +1,10 @@
-namespace JpPublicHolidays.Test.Net8
+using NextUnit;
+
+namespace JpPublicHolidays.Test
 {
     public class HolidayTest
     {
-        [Fact]
+        [Test]
         public void DateWithTimeZone_ShouldWorkAfterStaticInitialization()
         {
             // Act - Create a Holiday instance and access DateWithTimeZone
@@ -17,7 +19,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.NotEqual(default, dateWithTimeZone);
         }
 
-        [Fact]
+        [Test]
         public void DateWithTimeZone_ShouldReturnUtcPlus9Offset()
         {
             // Arrange
@@ -35,7 +37,7 @@ namespace JpPublicHolidays.Test.Net8
             Assert.Equal(expectedOffset, dateWithTimeZone.Offset);
         }
 
-        [Fact]
+        [Test]
         public void DateWithTimeZone_ShouldPreserveDateTime()
         {
             // Arrange
