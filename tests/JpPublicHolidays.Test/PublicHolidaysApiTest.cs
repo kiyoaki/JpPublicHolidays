@@ -12,7 +12,7 @@ namespace JpPublicHolidays.Test
 
             var day = holidays.FirstOrDefault(x => x.Date == new DateTime(DateTime.Now.Year, 1, 1));
             Assert.NotNull(day);
-            Assert.Equal("元日", day.Name);
+            Assert.Equal("元日", day?.Name);
         }
     }
 }
