@@ -45,8 +45,8 @@ namespace JpPublicHolidays.Test
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("元日", result.Name);
-            Assert.Equal(searchDate, result.Date);
+            Assert.Equal("元日", result?.Name);
+            Assert.Equal(searchDate, result?.Date);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace JpPublicHolidays.Test
             // Assert
             Assert.True(found);
             Assert.NotNull(result);
-            Assert.Equal("元日", result.Name);
+            Assert.Equal("元日", result?.Name);
         }
 
         [Test]
@@ -149,8 +149,8 @@ namespace JpPublicHolidays.Test
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("成人の日", result.Name);
-            Assert.Equal(new DateTime(2025, 1, 13), result.Date);
+            Assert.Equal("成人の日", result?.Name);
+            Assert.Equal(new DateTime(2025, 1, 13), result?.Date);
         }
 
         [Test]
@@ -165,8 +165,8 @@ namespace JpPublicHolidays.Test
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("建国記念の日", result.Name);
-            Assert.Equal(new DateTime(2025, 2, 11), result.Date);
+            Assert.Equal("建国記念の日", result?.Name);
+            Assert.Equal(new DateTime(2025, 2, 11), result?.Date);
         }
 
         [Test]
@@ -224,7 +224,7 @@ namespace JpPublicHolidays.Test
 
                 var holiday = loadedDb.FindByDate(new DateTime(2025, 1, 1));
                 Assert.NotNull(holiday);
-                Assert.Equal("元日", holiday.Name);
+                Assert.Equal("元日", holiday?.Name);
             }
             finally
             {
@@ -309,7 +309,7 @@ namespace JpPublicHolidays.Test
             Assert.True(db.Count > 0);
             var newYear = db.FindByDate(new DateTime(DateTime.Now.Year, 1, 1));
             Assert.NotNull(newYear);
-            Assert.Equal("元日", newYear.Name);
+            Assert.Equal("元日", newYear?.Name);
         }
 
         [Test]
