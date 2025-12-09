@@ -144,13 +144,13 @@ int count = db.Count;
 
 テストを実行するには、以下のコマンドを使用してください:
 
-```
+```bash
 dotnet run --project tests/JpPublicHolidays.Test/JpPublicHolidays.Test.csproj
 ```
 
 または、ビルド後に実行する場合:
 
-```
+```bash
 dotnet build
 dotnet run --project tests/JpPublicHolidays.Test/JpPublicHolidays.Test.csproj --no-build
 ```
