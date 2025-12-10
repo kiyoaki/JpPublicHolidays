@@ -155,7 +155,7 @@ dotnet build
 dotnet run --project tests/JpPublicHolidays.Test/JpPublicHolidays.Test.csproj --no-build
 ```
 
-**注意:** このプロジェクトはNextUnitテストフレームワークを使用しているため、`dotnet test`コマンドはサポートされていません。テストの実行には`dotnet run`を使用してください。
+**注意:** このプロジェクトは[NextUnit](https://www.nuget.org/packages/NextUnit)テストフレームワークを使用しているため、`dotnet test`コマンドはサポートされていません。テストの実行には`dotnet run`を使用してください。
 
 ## ライセンス
 
