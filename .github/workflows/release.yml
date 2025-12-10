@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # enable GitHub OIDC token for NuGet Trusted Publishing
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Pack all packages
+        run: |
+          echo "Packing JpPublicHolidays.Core..."
+          dotnet pack src/JpPublicHolidays.Core/JpPublicHolidays.Core.csproj \
+            --configuration Release \
+            --output ./artifacts \
+            --no-build
+
+          echo "Packing JpPublicHolidays.Generator..."
+          dotnet pack src/JpPublicHolidays.Generator/JpPublicHolidays.Generator.csproj \
+            --configuration Release \
+            --output ./artifacts \
+            --no-build
+
+          echo "Packing JpPublicHolidays.Platform..."
+          dotnet pack src/JpPublicHolidays.Platform/JpPublicHolidays.Platform.csproj \
+            --configuration Release \
+            --output ./artifacts \
+            --no-build
+
+          echo "Packing JpPublicHolidays meta-package..."
+          dotnet pack src/JpPublicHolidays/JpPublicHolidays.csproj \
+            --configuration Release \
+            --output ./artifacts \
+            --no-build
+
+          echo "Packages created:"
+          ls -lh ./artifacts/*.nupkg
+
+      - name: Verify package contents
+        run: |
+          echo "Verifying all required packages were created..."
+          CORE_PKG=$(ls ./artifacts/JpPublicHolidays.Core.*.nupkg 2>/dev/null || echo "")
+          GEN_PKG=$(ls ./artifacts/JpPublicHolidays.Generator.*.nupkg 2>/dev/null || echo "")
+          PLAT_PKG=$(ls ./artifacts/JpPublicHolidays.Platform.*.nupkg 2>/dev/null || echo "")
+          # Meta-package: exclude Core, Generator, Platform from the pattern
+          META_PKG=$(ls ./artifacts/JpPublicHolidays.*.nupkg 2>/dev/null | \
+            grep -v "Core\|Generator\|Platform" || echo "")
+
+          if [ -z "$CORE_PKG" ]; then
+            echo "Error: JpPublicHolidays.Core package not found"
+            exit 1
+          fi
+          if [ -z "$GEN_PKG" ]; then
+            echo "Error: JpPublicHolidays.Generator package not found"
+            exit 1
+          fi
+          if [ -z "$PLAT_PKG" ]; then
+            echo "Error: JpPublicHolidays.Platform package not found"
+            exit 1
+          fi
+          if [ -z "$META_PKG" ]; then
+            echo "Error: JpPublicHolidays meta-package not found"
+            exit 1
+          fi
+          echo "✅ All required packages are present"
+          echo "  - $CORE_PKG"
+          echo "  - $GEN_PKG"
+          echo "  - $PLAT_PKG"
+          echo "  - $META_PKG"
+
+      - name: NuGet login (OIDC)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet.org
+        run: |
+          dotnet nuget push "./artifacts/*.nupkg" \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
+            --skip-duplicate

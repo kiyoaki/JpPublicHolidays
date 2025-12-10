@@ -1,0 +1,8 @@
+- name: Set up .NET 10
+  uses: actions/setup-dotnet@v5
+  with:
+    dotnet-version: '10.x'
+
+- name: Verify .NET 10
+  run: |
+    dotnet --info

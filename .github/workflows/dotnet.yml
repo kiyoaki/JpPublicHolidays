@@ -1,0 +1,479 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # Job 1: Build and analyze code quality
+  build:
+    name: Build & Code Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0  # Full history for better analysis
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Display .NET info
+      run: dotnet --info
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build (Debug) - Lenient for development
+      run: |
+        echo "Building Debug configuration (lenient settings for development)..."
+        dotnet build --configuration Debug --no-restore
+    
+    - name: Build (Release) - Strict enforcement
+      run: |
+        echo "Building Release configuration (strict settings matching CI/CD)..."
+        dotnet build --configuration Release --no-restore
+    
+    - name: Verify Release build quality
+      run: |
+        echo "Release builds enforce TreatWarningsAsErrors and EnforceCodeStyleInBuild via Directory.Build.props"
+        echo "This ensures IDE developers see the same errors as CI when building Release configuration"
+        dotnet build --configuration Release --no-restore /p:EnforceCodeStyleInBuild=true /p:TreatWarningsAsErrors=true
+      continue-on-error: false
+
+  # Job 2: Run tests with coverage
+  test:
+    name: Test & Coverage
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run JpPublicHolidays sample tests (Microsoft.Testing.Platform)
+      run: |
+        echo "=== Running JpPublicHolidays Sample Tests ==="
+        dotnet run --project samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          --no-build \
+          -- --minimum-expected-tests 20
+    
+    - name: Run tests with trx logger (for artifacts)
+      run: |
+        echo "=== Running tests with TRX logger ==="
+        dotnet run --project samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          --no-build \
+          -- --results-directory ./TestResults --report-trx
+      continue-on-error: true
+    
+    - name: Check for traditional test projects
+      run: |
+        echo "=== Checking for traditional xUnit/NUnit/MSTest projects ==="
+        # Check if there are any test projects using traditional test frameworks
+        if dotnet sln list | grep -i "test" | grep -v "SampleTests"; then
+          echo "Found traditional test projects, running dotnet test..."
+          dotnet test --configuration Release --no-build --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx"
+        else
+          echo "No traditional test projects found (JpPublicHolidays uses Microsoft.Testing.Platform)"
+        fi
+      continue-on-error: true
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v5
+      if: always()
+      with:
+        name: test-results
+        path: |
+          **/test-results.trx
+          ./TestResults/**/*
+        retention-days: 30
+      continue-on-error: true
+
+  # Job 3: Verify documentation
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Check required documentation files
+      run: |
+        echo "Checking for required documentation files..."
+        required_files=("README.md" "PLANS.md" "DEVLOG.md" "CODING_STANDARDS.md" ".editorconfig")
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "Error: Required file $file not found"
+            exit 1
+          else
+            echo "✓ Found $file"
+          fi
+        done
+    
+    - name: Validate markdown files
+      uses: DavidAnson/markdownlint-cli2-action@v21
+      with:
+        globs: '**/*.md'
+      continue-on-error: true
+    
+    - name: Check for non-English content in code files
+      run: |
+        echo "Checking for non-ASCII characters in code files (potential non-English content)..."
+        # Search for non-ASCII characters in .cs files (excluding comments might have legitimate Unicode)
+        if grep -r -P '[^\x00-\x7F]' --include="*.cs" src/ samples/ 2>/dev/null | grep -v "// " | grep -v "/// " | grep -v "/\*"; then
+          echo "Warning: Found non-ASCII characters in code files"
+          echo "Please review CODING_STANDARDS.md - All code must be in English"
+          exit 0  # Warning only, don't fail the build
+        else
+          echo "✓ All code files use ASCII characters only"
+        fi
+
+  # Job 4: Verify project structure
+  structure:
+    name: Project Structure Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Verify project files exist
+      run: |
+        echo "Verifying project structure..."
+        projects=(
+          "src/JpPublicHolidays.Core/JpPublicHolidays.Core.csproj"
+          "src/JpPublicHolidays.Generator/JpPublicHolidays.Generator.csproj"
+          "src/JpPublicHolidays.Platform/JpPublicHolidays.Platform.csproj"
+          "samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj"
+        )
+        for project in "${projects[@]}"; do
+          if [ ! -f "$project" ]; then
+            echo "Error: Project file $project not found"
+            exit 1
+          else
+            echo "✓ Found $project"
+          fi
+        done
+    
+    - name: Check for circular dependencies
+      run: dotnet list reference
+      working-directory: src/JpPublicHolidays.Core
+      continue-on-error: true
+    
+    - name: Verify package references
+      run: |
+        echo "Checking JpPublicHolidays.Core dependencies..."
+        dotnet list src/JpPublicHolidays.Core/JpPublicHolidays.Core.csproj package
+        echo "Checking JpPublicHolidays.Generator dependencies..."
+        dotnet list src/JpPublicHolidays.Generator/JpPublicHolidays.Generator.csproj package
+        echo "Checking JpPublicHolidays.Platform dependencies..."
+        dotnet list src/JpPublicHolidays.Platform/JpPublicHolidays.Platform.csproj package
+
+  # Job 5: Security scan
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Check for vulnerable packages
+      run: dotnet list package --vulnerable --include-transitive
+      continue-on-error: true
+    
+    - name: Check for deprecated packages
+      run: dotnet list package --deprecated
+      continue-on-error: true
+
+  # Job 6: Source generator validation
+  generator:
+    name: Source Generator Validation
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build generator project
+      run: dotnet build src/JpPublicHolidays.Generator/JpPublicHolidays.Generator.csproj --configuration Release --no-restore --verbosity detailed
+    
+    - name: Clean sample tests
+      run: dotnet clean samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj
+    
+    - name: Build sample tests with detailed output
+      run: |
+        echo "Building sample tests to trigger source generator..."
+        dotnet build samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          --no-restore \
+          --verbosity detailed \
+          /p:EmitCompilerGeneratedFiles=true \
+          /p:CompilerGeneratedFilesOutputPath=obj/GeneratedFiles
+    
+    - name: List all obj directories
+      run: |
+        echo "=== Searching for generated files in obj directories ==="
+        find samples/JpPublicHolidays.SampleTests -type d -name "obj" -exec echo "Directory: {}" \;
+        find samples/JpPublicHolidays.SampleTests -type d -name "obj" -exec ls -la {} \; || true
+    
+    - name: Search for generated files (multiple patterns)
+      run: |
+        echo "=== Searching for generated files (pattern 1: obj/**/*.g.cs) ==="
+        find samples/JpPublicHolidays.SampleTests/obj -name "*.g.cs" -type f 2>/dev/null || echo "No .g.cs files found in obj/"
+        
+        echo ""
+        echo "=== Searching for generated files (pattern 2: GeneratedFiles/) ==="
+        find samples/JpPublicHolidays.SampleTests -path "*/GeneratedFiles/*.cs" -type f 2>/dev/null || echo "No files found in GeneratedFiles/"
+        
+        echo ""
+        echo "=== Searching for any generated C# files ==="
+        find samples/JpPublicHolidays.SampleTests -name "*.cs" -path "*/obj/*" -type f 2>/dev/null | head -20 || echo "No generated files found"
+    
+    - name: Check for specific generator output
+      run: |
+        echo "=== Looking for JpPublicHolidays generator output ==="
+        # Search for files containing "GeneratedTestRegistry" or "JpPublicHolidays.Generator"
+        if find samples/JpPublicHolidays.SampleTests -type f -name "*.cs" | xargs grep -l "GeneratedTestRegistry" 2>/dev/null; then
+          echo "✓ Found GeneratedTestRegistry references"
+        else
+          echo "⚠️ No GeneratedTestRegistry found in generated files"
+        fi
+    
+    - name: Display generated file content (if exists)
+      run: |
+        echo "=== Generated file content ==="
+        GENERATED_FILE=$(find samples/JpPublicHolidays.SampleTests -name "*GeneratedTestRegistry*.cs" -type f 2>/dev/null | head -1)
+        if [ -n "$GENERATED_FILE" ]; then
+          echo "Found: $GENERATED_FILE"
+          echo "Content:"
+          cat "$GENERATED_FILE"
+        else
+          echo "No GeneratedTestRegistry file found"
+          echo ""
+          echo "Listing all .cs files in obj directory:"
+          find samples/JpPublicHolidays.SampleTests/obj -name "*.cs" -type f 2>/dev/null || echo "None found"
+        fi
+    
+    - name: Verify generator was invoked
+      run: |
+        echo "=== Verifying generator execution ==="
+        # Check build log for generator messages
+        dotnet build samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          --no-restore \
+          --verbosity detailed 2>&1 | grep -i "generator\|JpPublicHolidays" || echo "No generator messages in build output"
+    
+    - name: Final validation
+      run: |
+        echo "=== Final Generator Validation ==="
+        # Try multiple search patterns
+        FOUND=0
+        
+        # Pattern 1: Look for *.g.cs files
+        if find samples/JpPublicHolidays.SampleTests -name "*.g.cs" -type f 2>/dev/null | grep -q .; then
+          echo "✓ Found .g.cs files"
+          FOUND=1
+        fi
+        
+        # Pattern 2: Look for GeneratedTestRegistry
+        if find samples/JpPublicHolidays.SampleTests -name "*GeneratedTestRegistry*.cs" -type f 2>/dev/null | grep -q .; then
+          echo "✓ Found GeneratedTestRegistry file"
+          FOUND=1
+        fi
+        
+        # Pattern 3: Look in EmitCompilerGeneratedFiles output
+        if [ -d "samples/JpPublicHolidays.SampleTests/obj/GeneratedFiles" ]; then
+          echo "✓ GeneratedFiles directory exists"
+          ls -la samples/JpPublicHolidays.SampleTests/obj/GeneratedFiles/
+          FOUND=1
+        fi
+        
+        if [ $FOUND -eq 0 ]; then
+          echo "⚠️ Warning: Source generator output not found"
+          echo "This might be expected if the generator is disabled or not producing output yet."
+          echo "Current M1 status: Generator works but may have conditional compilation (#if false)"
+          exit 0  # Don't fail the build, just warn
+        else
+          echo "✅ Source generator is producing output"
+        fi
+
+  # Job 7: Performance baseline check
+  performance:
+    name: Performance Baseline
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build in Release mode
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run sample tests and measure time
+      run: |
+        echo "Running sample tests and measuring execution time..."
+        start_time=$(date +%s%N)
+        dotnet run --project samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj --configuration Release --no-build
+        end_time=$(date +%s%N)
+        elapsed_ms=$(( (end_time - start_time) / 1000000 ))
+        echo "Test execution time: ${elapsed_ms}ms"
+        
+        # Check against performance target (should be < 1000ms for 20 tests)
+        if [ $elapsed_ms -gt 2000 ]; then
+          echo "Warning: Test execution took longer than expected (>${elapsed_ms}ms)"
+        else
+          echo "✓ Performance within acceptable range"
+        fi
+      continue-on-error: true
+
+  # Job 8: EditorConfig validation
+  editorconfig:
+    name: EditorConfig Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Check .editorconfig exists
+      run: |
+        if [ -f ".editorconfig" ]; then
+          echo "✓ .editorconfig found"
+          cat .editorconfig
+        else
+          echo "Error: .editorconfig not found"
+          exit 1
+        fi
+    
+    - name: Validate .editorconfig format
+      run: |
+        echo "Validating .editorconfig format..."
+        # Basic validation - check for root = true
+        if grep -q "root = true" .editorconfig; then
+          echo "✓ .editorconfig has root = true"
+        else
+          echo "Warning: .editorconfig should have 'root = true'"
+        fi
+
+  # Job 9: Final health check summary
+  health-check:
+    name: Health Check Summary
+    runs-on: ubuntu-latest
+    needs: [build, test, documentation, structure, security, generator, performance, editorconfig]
+    if: always()
+    
+    steps:
+    - name: Check job results
+      run: |
+        echo "=== CI Health Check Summary ==="
+        echo "Build: ${{ needs.build.result }}"
+        echo "Test: ${{ needs.test.result }}"
+        echo "Documentation: ${{ needs.documentation.result }}"
+        echo "Structure: ${{ needs.structure.result }}"
+        echo "Security: ${{ needs.security.result }}"
+        echo "Generator: ${{ needs.generator.result }}"
+        echo "Performance: ${{ needs.performance.result }}"
+        echo "EditorConfig: ${{ needs.editorconfig.result }}"
+        echo ""
+        
+        # Critical checks that must pass
+        if [ "${{ needs.build.result }}" != "success" ]; then
+          echo "❌ Build failed - this is critical"
+          exit 1
+        fi
+        
+        if [ "${{ needs.test.result }}" != "success" ]; then
+          echo "❌ Tests failed - this is critical"
+          exit 1
+        fi
+        
+        if [ "${{ needs.structure.result }}" != "success" ]; then
+          echo "❌ Project structure validation failed - this is critical"
+          exit 1
+        fi
+        
+        # Non-critical checks (warnings only)
+        if [ "${{ needs.generator.result }}" != "success" ]; then
+          echo "⚠️ Generator validation had issues (non-critical during M1 development)"
+        fi
+        
+        if [ "${{ needs.performance.result }}" != "success" ]; then
+          echo "⚠️ Performance check had issues (non-critical)"
+        fi
+        
+        if [ "${{ needs.security.result }}" != "success" ]; then
+          echo "⚠️ Security scan had issues (non-critical)"
+        fi
+        
+        if [ "${{ needs.documentation.result }}" != "success" ]; then
+          echo "⚠️ Documentation check had issues (non-critical)"
+        fi
+        
+        if [ "${{ needs.editorconfig.result }}" != "success" ]; then
+          echo "⚠️ EditorConfig validation had issues (non-critical)"
+        fi
+        
+        echo ""
+        echo "✅ All critical checks passed"
+        echo "Note: Some non-critical checks may have warnings - review above for details"

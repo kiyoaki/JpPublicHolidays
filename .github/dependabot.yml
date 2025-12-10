@@ -1,0 +1,60 @@
+version: 2
+updates:
+  # NuGet package updates
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    assignees:
+      - "kiyoaki"
+    labels:
+      - "dependencies"
+      - "nuget"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    # Group related package updates together
+    groups:
+      microsoft-testing:
+        patterns:
+          - "Microsoft.Testing.*"
+        update-types:
+          - "minor"
+          - "patch"
+      microsoft-codeanalysis:
+        patterns:
+          - "Microsoft.CodeAnalysis.*"
+        update-types:
+          - "minor"
+          - "patch"
+      test-frameworks:
+        patterns:
+          - "xunit"
+          - "xunit.*"
+          - "coverlet.*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 3
+    assignees:
+      - "kiyoaki"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

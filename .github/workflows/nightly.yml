@@ -1,0 +1,240 @@
+name: Nightly Build
+
+on:
+  schedule:
+    # Run every day at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # Test against multiple .NET versions
+  multi-version-test:
+    name: Test on .NET ${{ matrix.dotnet-version }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        dotnet-version: ['10.0.x']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+    
+    - name: Display .NET info
+      run: dotnet --info
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run JpPublicHolidays sample tests
+      # Single line to avoid PowerShell issues with backslash line continuation on Windows
+      run: |
+        echo "Running JpPublicHolidays sample tests..."
+        dotnet run --project samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj --configuration Release --no-build -- --minimum-expected-tests 20
+
+  # Native AOT compilation test
+  native-aot-test:
+    name: Native AOT Compilation Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Install Native AOT prerequisites
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang zlib1g-dev
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Test Native AOT publishing (dry-run)
+      run: |
+        dotnet publish samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          /p:PublishAot=true \
+          /p:PublishTrimmed=true \
+          /p:TrimMode=full \
+          --self-contained
+      continue-on-error: true  # Native AOT support is WIP
+    
+    - name: Check for trim warnings
+      run: |
+        echo "Checking for trim analysis warnings..."
+        dotnet publish samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          /p:PublishTrimmed=true \
+          /p:EnableTrimAnalyzer=true \
+          /p:SuppressTrimAnalysisWarnings=false \
+          --self-contained
+      continue-on-error: true
+
+  # Performance benchmark
+  performance-benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build in Release mode
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run performance baseline
+      run: |
+        echo "=== Performance Baseline Test ==="
+        echo "Running sample tests 5 times to get average..."
+        
+        total_time=0
+        runs=5
+        
+        for i in $(seq 1 $runs); do
+          echo "Run $i of $runs..."
+          start_time=$(date +%s%N)
+          dotnet run --project samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj --configuration Release --no-build > /dev/null 2>&1
+          end_time=$(date +%s%N)
+          elapsed_ms=$(( (end_time - start_time) / 1000000 ))
+          echo "  Execution time: ${elapsed_ms}ms"
+          total_time=$((total_time + elapsed_ms))
+        done
+        
+        avg_time=$((total_time / runs))
+        echo ""
+        echo "=== Results ==="
+        echo "Average execution time: ${avg_time}ms"
+        echo "Target: < 1000ms for 20 tests"
+        echo "Per-test overhead: ~$((avg_time / 20))ms"
+        
+        if [ $avg_time -lt 1000 ]; then
+          echo "✅ Performance target met!"
+        else
+          echo "⚠️ Performance target not met (${avg_time}ms > 1000ms)"
+        fi
+
+  # Memory usage analysis
+  memory-analysis:
+    name: Memory Usage Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build in Release mode
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Run memory profiling
+      run: |
+        echo "=== Memory Usage Analysis ==="
+        # Run with dotnet-trace if available
+        if command -v dotnet-trace &> /dev/null; then
+          echo "Running with dotnet-trace..."
+          dotnet-trace collect --process-id $(pgrep -f "JpPublicHolidays.SampleTests") --providers Microsoft-Windows-DotNETRuntime
+        else
+          echo "dotnet-trace not available, using basic measurement"
+          /usr/bin/time -v dotnet run --project samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj --configuration Release --no-build 2>&1 | grep -i "maximum resident"
+        fi
+      continue-on-error: true
+
+  # Code quality metrics
+  code-quality:
+    name: Code Quality Metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Count lines of code
+      run: |
+        echo "=== Code Statistics ==="
+        echo "Source files:"
+        find src -name "*.cs" | wc -l
+        echo "Lines of code (excluding blank lines and comments):"
+        find src -name "*.cs" -exec cat {} \; | grep -v "^\s*$" | grep -v "^\s*//" | grep -v "^\s*/\*" | grep -v "^\s*\*" | wc -l
+        echo ""
+        echo "Test files:"
+        find samples -name "*.cs" | wc -l
+        echo "Test lines of code:"
+        find samples -name "*.cs" -exec cat {} \; | grep -v "^\s*$" | grep -v "^\s*//" | wc -l
+    
+    - name: Check TODO items
+      run: |
+        echo "=== TODO Items by Milestone ==="
+        echo "M1 tasks:"
+        grep -r "TODO M1:" src/ samples/ || echo "None found"
+        echo ""
+        echo "M2 tasks:"
+        grep -r "TODO M2:" src/ samples/ || echo "None found"
+        echo ""
+        echo "M3 tasks:"
+        grep -r "TODO M3:" src/ samples/ || echo "None found"
+        echo ""
+        echo "General TODOs:"
+        grep -r "TODO[^:]" src/ samples/ || echo "None found"
+
+  # Summary report
+  nightly-summary:
+    name: Nightly Build Summary
+    runs-on: ubuntu-latest
+    needs: [multi-version-test, native-aot-test, performance-benchmark, memory-analysis, code-quality]
+    if: always()
+    
+    steps:
+    - name: Generate summary
+      run: |
+        echo "=== Nightly Build Summary ==="
+        echo "Multi-version test: ${{ needs.multi-version-test.result }}"
+        echo "Native AOT test: ${{ needs.native-aot-test.result }}"
+        echo "Performance: ${{ needs.performance-benchmark.result }}"
+        echo "Memory: ${{ needs.memory-analysis.result }}"
+        echo "Code quality: ${{ needs.code-quality.result }}"
+        echo ""
+        echo "Timestamp: $(date -u)"

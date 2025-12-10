@@ -1,0 +1,304 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # PR metadata validation
+  pr-validation:
+    name: PR Metadata Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    
+    - name: Check PR title format
+      run: |
+        PR_TITLE="${{ github.event.pull_request.title }}"
+        echo "PR Title: $PR_TITLE"
+        
+        # Check if title starts with conventional commit type
+        if [[ "$PR_TITLE" =~ ^(feat|fix|docs|refactor|test|chore|perf|ci|build|style):\ .+ ]]; then
+          echo "✅ PR title follows conventional commit format"
+        else
+          echo "⚠️ PR title should follow format: type: description"
+          echo "Valid types: feat, fix, docs, refactor, test, chore, perf, ci, build, style"
+          echo "Example: feat: Add parameterized test support"
+        fi
+    
+    - name: Check for breaking changes
+      run: |
+        echo "Checking for potential breaking changes..."
+        # Check if any public APIs were modified
+        git diff origin/main...HEAD --name-only | grep "src/JpPublicHolidays.Core" || echo "No core changes detected"
+    
+    - name: Verify commit messages
+      run: |
+        echo "Checking commit messages in English..."
+        # Get all commits in the PR
+        COMMITS=$(git log origin/main..HEAD --pretty=format:"%s")
+        echo "$COMMITS"
+        
+        # Basic check for non-ASCII characters (potential non-English)
+        if echo "$COMMITS" | grep -P '[^\x00-\x7F]'; then
+          echo "⚠️ Warning: Commit messages may contain non-English characters"
+          echo "See CODING_STANDARDS.md - All commit messages should be in English"
+        else
+          echo "✅ All commit messages use ASCII characters"
+        fi
+
+  # Changed files analysis
+  changed-files:
+    name: Changed Files Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    
+    - name: Get changed files
+      id: changed-files
+      run: |
+        echo "Changed files:"
+        git diff --name-only origin/main...HEAD
+        
+        # Count changes by category
+        echo ""
+        echo "=== Changes by Category ==="
+        echo "Core changes: $(git diff --name-only origin/main...HEAD | grep -c "src/JpPublicHolidays.Core" || echo 0)"
+        echo "Generator changes: $(git diff --name-only origin/main...HEAD | grep -c "src/JpPublicHolidays.Generator" || echo 0)"
+        echo "Platform changes: $(git diff --name-only origin/main...HEAD | grep -c "src/JpPublicHolidays.Platform" || echo 0)"
+        echo "Test changes: $(git diff --name-only origin/main...HEAD | grep -c "samples/" || echo 0)"
+        echo "Documentation changes: $(git diff --name-only origin/main...HEAD | grep -c "\.md$" || echo 0)"
+        echo "Workflow changes: $(git diff --name-only origin/main...HEAD | grep -c "\.github/" || echo 0)"
+    
+    - name: Check if tests were added
+      run: |
+        if git diff --name-only origin/main...HEAD | grep -q "samples/.*Tests\.cs"; then
+          echo "✅ Test files were modified/added"
+        else
+          echo "⚠️ No test files were modified. Consider adding tests for new features."
+        fi
+    
+    - name: Check if documentation was updated
+      run: |
+        # Check if code changes also include doc updates
+        CODE_CHANGES=$(git diff --name-only origin/main...HEAD | grep -c "src/" || echo 0)
+        DOC_CHANGES=$(git diff --name-only origin/main...HEAD | grep -c "\.md$" || echo 0)
+        
+        if [ $CODE_CHANGES -gt 0 ] && [ $DOC_CHANGES -eq 0 ]; then
+          echo "⚠️ Code was changed but documentation was not updated"
+          echo "Consider updating README.md or PLANS.md if needed"
+        else
+          echo "✅ Documentation appears to be in sync"
+        fi
+
+  # Build with warnings as errors
+  strict-build:
+    name: Strict Build (Warnings as Errors)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build Release (strict mode)
+      run: |
+        echo "Building with strict code quality checks (enforced by Directory.Build.props)..."
+        dotnet build --configuration Release --no-restore
+    
+    - name: Verify no warnings
+      run: |
+        echo "Verifying build has no warnings..."
+        dotnet build --configuration Release --no-restore 2>&1 | tee build.log
+        # Check for actual compiler/analyzer warnings (format: "path(line,col): warning CODE: message")
+        if grep -E ": warning [A-Z]{2,}[0-9]+:" build.log; then
+          echo "⚠️ Build warnings found"
+          exit 1
+        else
+          echo "✅ No build warnings"
+        fi
+
+  # Code formatting check
+  format-check:
+    name: Code Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Install dotnet-format
+      run: dotnet tool install -g dotnet-format || true
+    
+    - name: Check code formatting
+      run: |
+        dotnet format --verify-no-changes --verbosity diagnostic
+      continue-on-error: true
+    
+    - name: Check EditorConfig compliance
+      run: |
+        echo "Checking .editorconfig rules..."
+        # Check for tabs vs spaces
+        if find src samples -name "*.cs" -exec grep -l $'\t' {} \;; then
+          echo "⚠️ Found tabs in C# files. .editorconfig specifies spaces."
+        else
+          echo "✅ No tabs found in C# files"
+        fi
+        
+        # Check for trailing whitespace
+        if find src samples -name "*.cs" -exec grep -l " $" {} \;; then
+          echo "⚠️ Found trailing whitespace in C# files"
+        else
+          echo "✅ No trailing whitespace found"
+        fi
+
+  # Verify generator output
+  generator-check:
+    name: Generator Output Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore and build
+      run: |
+        dotnet restore
+        dotnet build --configuration Release --no-restore
+    
+    - name: Verify generator produced output
+      run: |
+        echo "Checking for generated files..."
+        GENERATED_FILES=$(find samples/JpPublicHolidays.SampleTests/obj -name "*.g.cs" 2>/dev/null || echo "")
+        
+        if [ -z "$GENERATED_FILES" ]; then
+          echo "❌ No generated files found!"
+          echo "Source generator may not be running correctly"
+          exit 1
+        else
+          echo "✅ Generator produced output:"
+          echo "$GENERATED_FILES"
+          echo ""
+          echo "Sample generated content:"
+          head -50 $(find samples/JpPublicHolidays.SampleTests/obj -name "GeneratedTestRegistry.g.cs" | head -1)
+        fi
+    
+    - name: Check for generator diagnostics
+      run: |
+        echo "Checking for generator diagnostics/errors..."
+        dotnet build samples/JpPublicHolidays.SampleTests/JpPublicHolidays.SampleTests.csproj \
+          --configuration Release \
+          --no-restore \
+          --verbosity detailed 2>&1 | grep -i "JpPublicHolidays" || echo "No generator diagnostics found"
+
+  # Dependency verification
+  dependency-check:
+    name: Dependency Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Check for new dependencies
+      run: |
+        echo "=== Project Dependencies ==="
+        for project in src/JpPublicHolidays.Core/JpPublicHolidays.Core.csproj \
+                       src/JpPublicHolidays.Generator/JpPublicHolidays.Generator.csproj \
+                       src/JpPublicHolidays.Platform/JpPublicHolidays.Platform.csproj; do
+          echo ""
+          echo "Dependencies for $project:"
+          dotnet list $project package
+        done
+    
+    - name: Verify minimal dependencies principle
+      run: |
+        echo "Checking JpPublicHolidays.Core has minimal dependencies..."
+        CORE_DEPS=$(dotnet list src/JpPublicHolidays.Core/JpPublicHolidays.Core.csproj package --format json 2>/dev/null | grep -c "packageId" || echo "0")
+        echo "Core project has $CORE_DEPS external dependencies"
+        
+        if [ $CORE_DEPS -gt 5 ]; then
+          echo "⚠️ Core project may have too many dependencies ($CORE_DEPS)"
+          echo "Consider reviewing dependencies to keep core lightweight"
+        else
+          echo "✅ Core dependencies are minimal"
+        fi
+
+  # All checks summary
+  pr-checks-summary:
+    name: PR Checks Summary
+    runs-on: ubuntu-latest
+    needs: [pr-validation, changed-files, strict-build, format-check, generator-check, dependency-check]
+    if: always()
+    
+    steps:
+    - name: Summary
+      run: |
+        echo "=== PR Validation Summary ==="
+        echo "PR Validation: ${{ needs.pr-validation.result }}"
+        echo "Changed Files: ${{ needs.changed-files.result }}"
+        echo "Strict Build: ${{ needs.strict-build.result }}"
+        echo "Format Check: ${{ needs.format-check.result }}"
+        echo "Generator Check: ${{ needs.generator-check.result }}"
+        echo "Dependency Check: ${{ needs.dependency-check.result }}"
+        echo ""
+        
+        if [ "${{ needs.pr-validation.result }}" == "success" ] && \
+           [ "${{ needs.strict-build.result }}" == "success" ] && \
+           [ "${{ needs.generator-check.result }}" == "success" ]; then
+          echo "✅ All critical PR checks passed!"
+        else
+          echo "❌ Some PR checks failed. Please review the errors above."
+          exit 1
+        fi
+    
+    - name: PR Checklist
+      run: |
+        echo "### PR Checklist"
+        echo ""
+        echo "- [ ] Code follows CODING_STANDARDS.md (English-only policy)"
+        echo "- [ ] All code and comments are in English"
+        echo "- [ ] Commit messages follow conventional format"
+        echo "- [ ] Tests added for new features"
+        echo "- [ ] Documentation updated if needed"
+        echo "- [ ] No new warnings introduced"
+        echo "- [ ] Source generator produces valid output"
+        echo "- [ ] Build passes with TreatWarningsAsErrors=true"
