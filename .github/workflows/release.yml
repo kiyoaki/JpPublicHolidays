@@ -31,28 +31,10 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Pack all packages
+      - name: Pack JpPublicHolidays
         run: |
-          echo "Packing JpPublicHolidays.Core..."
-          dotnet pack src/JpPublicHolidays.Core/JpPublicHolidays.Core.csproj \
-            --configuration Release \
-            --output ./artifacts \
-            --no-build
-
-          echo "Packing JpPublicHolidays.Generator..."
-          dotnet pack src/JpPublicHolidays.Generator/JpPublicHolidays.Generator.csproj \
-            --configuration Release \
-            --output ./artifacts \
-            --no-build
-
-          echo "Packing JpPublicHolidays.Platform..."
-          dotnet pack src/JpPublicHolidays.Platform/JpPublicHolidays.Platform.csproj \
-            --configuration Release \
-            --output ./artifacts \
-            --no-build
-
-          echo "Packing JpPublicHolidays meta-package..."
-          dotnet pack src/JpPublicHolidays/JpPublicHolidays.csproj \
+          echo "Packing JpPublicHolidays..."
+          dotnet pack JpPublicHolidays/JpPublicHolidays.csproj \
             --configuration Release \
             --output ./artifacts \
             --no-build
@@ -62,35 +44,14 @@ jobs:
 
       - name: Verify package contents
         run: |
-          echo "Verifying all required packages were created..."
-          CORE_PKG=$(ls ./artifacts/JpPublicHolidays.Core.*.nupkg 2>/dev/null || echo "")
-          GEN_PKG=$(ls ./artifacts/JpPublicHolidays.Generator.*.nupkg 2>/dev/null || echo "")
-          PLAT_PKG=$(ls ./artifacts/JpPublicHolidays.Platform.*.nupkg 2>/dev/null || echo "")
-          # Meta-package: exclude Core, Generator, Platform from the pattern
-          META_PKG=$(ls ./artifacts/JpPublicHolidays.*.nupkg 2>/dev/null | \
-            grep -v "Core\|Generator\|Platform" || echo "")
+          echo "Verifying JpPublicHolidays package was created..."
+          PKG=$(ls ./artifacts/JpPublicHolidays.*.nupkg 2>/dev/null || echo "")
 
-          if [ -z "$CORE_PKG" ]; then
-            echo "Error: JpPublicHolidays.Core package not found"
+          if [ -z "$PKG" ]; then
+            echo "Error: JpPublicHolidays package not found"
             exit 1
           fi
-          if [ -z "$GEN_PKG" ]; then
-            echo "Error: JpPublicHolidays.Generator package not found"
-            exit 1
-          fi
-          if [ -z "$PLAT_PKG" ]; then
-            echo "Error: JpPublicHolidays.Platform package not found"
-            exit 1
-          fi
-          if [ -z "$META_PKG" ]; then
-            echo "Error: JpPublicHolidays meta-package not found"
-            exit 1
-          fi
-          echo "✅ All required packages are present"
-          echo "  - $CORE_PKG"
-          echo "  - $GEN_PKG"
-          echo "  - $PLAT_PKG"
-          echo "  - $META_PKG"
+          echo "✅ Package is present: $PKG"
 
       - name: NuGet login (OIDC)
         id: login
