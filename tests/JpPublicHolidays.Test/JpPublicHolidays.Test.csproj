@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NextUnit" Version="1.6.6" />
+    <PackageReference Include="NextUnit" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
